@@ -8,23 +8,30 @@ const redirectResult = urlParams.get('redirectResult');
 
 async function startCheckout() {
   try {
+    const checkoutDetails = {
+      amount: {
+        value: 10000,
+        currency: 'EUR'
+      },
+      locale: "en_US",
+      countryCode: 'NL'
+    };
+
     const paymentMethodsResponse = await fetch('/api/paymentMethods', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
+      body: checkoutDetails
     }).then(response => response.json());
 
     const configuration = {
       paymentMethodsResponse: paymentMethodsResponse,
       clientKey,
       environment: "test",
-      amount: {
-        value: 10000,
-        currency: 'EUR'
-      },
-      locale: "en_US",
-      countryCode: 'NL',
+      amount: checkoutDetails.amount,
+      locale: checkoutDetails.locale,
+      countryCode: checkoutDetails.countryCode,
       showPayButton: true,
       // override Security Code label
       translations: {
@@ -103,10 +110,7 @@ async function startCheckout() {
         hasHolderName: true,
         holderNameRequired: true,
         name: "Credit or debit card",
-        amount: {
-          value: 10000,
-          currency: "EUR",
-        },
+        amount: checkoutDetails.amount,
         placeholders: {
           cardNumber: '1234 5678 9012 3456',
           expiryDate: 'MM/YY',

@@ -46,11 +46,16 @@ app.set("view engine", "handlebars");
 
 // Get payment methods
 app.post("/api/paymentMethods", async (req, res) => {
+  const checkoutDetails = {
+    channel: "Web",
+    merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
+    amount: req.body.amount,
+    locale: req.body.locale,
+    countryCode: req.body.countryCode
+  };
+  
   try {
-    const response = await checkout.PaymentsApi.paymentMethods({
-      channel: "Web",
-      merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-    });
+    const response = await checkout.PaymentsApi.paymentMethods({checkoutDetails});
     res.json(response);
   } catch (err) {
     console.error(`Error: ${err.message}, error code: ${err.errorCode}`);
